@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package com.github.ehiggs.spark.terasort
+package io.github.pan3793.spark.terasort
 
 import com.google.common.primitives.Longs
-import scala.math.BigDecimal
 
 import org.apache.spark.Partitioner
 
@@ -30,17 +29,17 @@ case class TeraSortPartitioner(numPartitions: Int) extends Partitioner {
 
   import TeraSortPartitioner._
 
-  val rangePerPart : Long =
+  private val partitionLength: Long =
     (BigDecimal(max - min) / numPartitions).setScale(0, BigDecimal.RoundingMode.UP).toLong
 
   override def getPartition(key: Any): Int = {
     val b = key.asInstanceOf[Array[Byte]]
     val prefix = Longs.fromBytes(0, b(0), b(1), b(2), b(3), b(4), b(5), b(6))
-    (prefix / rangePerPart).toInt
+    (prefix / partitionLength).toInt
   }
 }
 
 object TeraSortPartitioner {
-  val min : Long = Longs.fromBytes(0, 0, 0, 0, 0, 0, 0, 0)
-  val max : Long = Longs.fromBytes(0, -1, -1, -1, -1, -1, -1, -1)  // 0xff = -1
+  val min: Long = Longs.fromBytes(0, 0, 0, 0, 0, 0, 0, 0)
+  val max: Long = Longs.fromBytes(0, -1, -1, -1, -1, -1, -1, -1) // 0xff = -1
 }

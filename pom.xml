@@ -16,216 +16,214 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<modelVersion>4.0.0</modelVersion>
-<groupId>com.github.ehiggs</groupId>
-<artifactId>spark-terasort</artifactId>
-<version>1.2-SNAPSHOT</version>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.github.pan3793</groupId>
+  <artifactId>spark-terasort_${scala.binary.version}</artifactId>
+  <version>${project.version}</version>
+  <packaging>jar</packaging>
 
-<name>spark-terasort</name>
-<url>https://github.com/ehiggs/spark-terasort</url>
-<description>Terasort benchmark for Spark.</description>
-<packaging>jar</packaging>
-<scm>
-  <connection>scm:git:git@github.com:ehiggs/${project.artifactId}.git</connection>
-  <url>https://github.com/ehiggs/spark-terasort.git</url>
-  <tag>spark-terasort-1.1</tag>
-</scm>
-<licenses>
-  <license>
-    <name>Apache 2.0 License</name>
-    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-    <distribution>repo</distribution>
-  </license>
-</licenses>
-<developers>
-  <developer>
-    <id>ehiggs</id>
-    <name>Ewan Higgs</name>
-    <email>ewan.higgs@gmail.com</email>
-  </developer>
-</developers>
+  <name>spark-terasort</name>
+  <description>TeraSort benchmark for Apache Spark.</description>
+  <url>https://github.com/pan3793/spark-terasort</url>
+  <licenses>
+    <license>
+      <name>Apache 2.0 License</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>pan3793</id>
+      <name>Cheng Pan</name>
+      <email>pan3793@gmail.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git@github.com:pan3793/spark-terasort.git</connection>
+    <url>https://github.com/pan3793/spark-terasort.git</url>
+  </scm>
 
-<distributionManagement>
-  <snapshotRepository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  </snapshotRepository>
-  <repository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-  </repository>
-</distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
-<build>
-  <resources>
-    <resource>
-      <directory>${basedir}/src/main/scala</directory>
-    </resource>
-  </resources>
-  <plugins>
-    <plugin>
-      <artifactId>maven-compiler-plugin</artifactId>
-      <version>3.1</version>
-      <configuration>
-        <source>1.7</source>
-        <target>1.7</target>
-      </configuration>
-    </plugin>
-    <plugin>
-      <groupId>net.alchim31.maven</groupId>
-      <artifactId>scala-maven-plugin</artifactId>
-      <version>4.3.0</version>
-      <executions>
-        <execution>
-          <goals>
-            <goal>compile</goal>
-            <goal>testCompile</goal>
-          </goals>
-        </execution>
-        <execution>
-          <id>attach-javadocs</id>
-          <goals>
-            <goal>doc-jar</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>
-        <sourceDir>src/main/scala</sourceDir>
-        <jvmArgs>
-          <jvmArg>-Xms64m</jvmArg>
-          <jvmArg>-Xmx1024m</jvmArg>
-        </jvmArgs>
-		<args>
-			<arg>-nobootcp</arg>
-		</args>
-        <scalaVersion>${scala.version}</scalaVersion>
-      </configuration>
-  </plugin>
-  <plugin>                                                                  
-      <groupId>org.apache.maven.plugins</groupId>                             
-      <artifactId>maven-dependency-plugin</artifactId>                        
-      <executions>                                                            
-        <!-- When using SPARK_PREPEND_CLASSES Spark classes compiled locally don't use
-             shaded deps. So here we store jars in their original form which are added
-             when the classpath is computed. 
-        -->                              
-        <execution>                                                           
-          <id>copy-dependencies</id>                                          
-          <phase>package</phase>                                              
-          <goals>                                                             
-            <goal>copy-dependencies</goal>                                    
-          </goals>                                                            
-          <configuration>                                                      
-            <outputDirectory>${project.build.directory}</outputDirectory>     
-            <overWriteReleases>false</overWriteReleases>                      
-            <overWriteSnapshots>false</overWriteSnapshots>                    
-            <overWriteIfNewer>true</overWriteIfNewer>                         
-            <useSubDirectoryPerType>true</useSubDirectoryPerType>             
-            <includeArtifactIds>                                              
-              guava
-            </includeArtifactIds>                                             
-            <silent>true</silent>                                             
-          </configuration>                                                    
-        </execution>                                                          
-      </executions>                                                           
-    </plugin>  
-    <plugin>
-      <artifactId>maven-assembly-plugin</artifactId>
-      <version>2.4.1</version>
-      <configuration>
-        <descriptorRefs>
-          <descriptorRef>jar-with-dependencies</descriptorRef>
-        </descriptorRefs>
-      </configuration>
-      <executions>
-        <execution>
-          <id>make-assembly</id>
-          <phase>package</phase>
-          <goals>
-            <goal>single</goal>
-          </goals>
-        </execution>
-      </executions>
-  </plugin>
-  <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <version>2.4</version>
-  </plugin>
-  <plugin>
-    <groupId>org.scalastyle</groupId>
-    <artifactId>scalastyle-maven-plugin</artifactId>
-    <version>0.4.0</version>
-    <configuration>
-      <verbose>false</verbose>
-      <failOnViolation>true</failOnViolation>
-      <includeTestSourceDirectory>false</includeTestSourceDirectory>
-      <failOnWarning>false</failOnWarning>
-      <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
-      <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
-      <configLocation>scalastyle-config.xml</configLocation>
-      <outputFile>scalastyle-output.xml</outputFile>
-      <outputEncoding>UTF-8</outputEncoding>
-    </configuration>
-    <executions>
-      <execution>
-        <phase>package</phase>
-        <goals>
-          <goal>check</goal>
-        </goals>
-      </execution>
-    </executions>
-    </plugin>
-    <plugin>                                                                  
-        <groupId>org.apache.maven.plugins</groupId>                             
-        <artifactId>maven-shade-plugin</artifactId>                             
-        <version>2.2</version>  
+  <properties>
+    <project.version>2.0.0-SNAPSHOT</project.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <java.version>8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.version>3.6.3</maven.version>
+    <scalafmt.version>3.6.1</scalafmt.version>
+    <scalatest.version>3.2.16</scalatest.version>
+
+    <spark.version>3.3.2</spark.version>
+
+    <maven.plugin.antrun.version>3.1.0</maven.plugin.antrun.version>
+    <maven.plugin.clean.version>3.3.1</maven.plugin.clean.version>
+    <maven.plugin.flatten.version>1.5.0</maven.plugin.flatten.version>
+    <maven.plugin.jar.version>3.3.0</maven.plugin.jar.version>
+    <maven.plugin.scala.version>4.8.0</maven.plugin.scala.version>
+    <maven.plugin.scalatest.version>2.2.0</maven.plugin.scalatest.version>
+    <maven.plugin.spotless.version>2.24.1</maven.plugin.spotless.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_${scala.binary.version}</artifactId>
+      <version>${spark.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_${scala.binary.version}</artifactId>
+      <version>${scalatest.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/scala</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>${maven.plugin.scala.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>${maven.plugin.scalatest.version}</version>
+        <!-- Note config is repeated in surefire config -->
         <configuration>
-          <relocations>
-            <relocation>                                                        
-              <pattern>com.google.common</pattern>                              
-              <shadedPattern>org.spark-project.guava</shadedPattern>            
-              <excludes>                                                        
-                <!--                                                            
-                  These classes cannot be relocated, because the Java API exposes the
-                  "Optional" type; the others are referenced by the Optional class.
-                -->                                                             
-                <exclude>com/google/common/base/Absent*</exclude>               
-                <exclude>com/google/common/base/Function</exclude>              
-                <exclude>com/google/common/base/Optional*</exclude>             
-                <exclude>com/google/common/base/Present*</exclude>              
-                <exclude>com/google/common/base/Supplier</exclude>              
-              </excludes>                                                       
-            </relocation>                                                       
-          </relocations>                                                        
-        </configuration>   
+          <argLine>-ea -Xmx4g -Xss4m</argLine>
+          <environmentVariables>
+            <SPARK_TESTING>1</SPARK_TESTING>
+          </environmentVariables>
+          <systemProperties>
+            <java.awt.headless>true</java.awt.headless>
+            <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+            <spark.testing>1</spark.testing>
+            <spark.ui.enabled>false</spark.ui.enabled>
+            <spark.ui.showConsoleProgress>false</spark.ui.showConsoleProgress>
+          </systemProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${maven.plugin.spotless.version}</version>
+        <configuration>
+          <upToDateChecking>
+            <enabled>true</enabled>
+          </upToDateChecking>
+          <java>
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+            <googleJavaFormat>
+              <version>1.7</version>
+              <style>GOOGLE</style>
+            </googleJavaFormat>
+            <removeUnusedImports></removeUnusedImports>
+            <importOrder>
+              <order>java,javax,scala,</order>
+            </importOrder>
+          </java>
+          <scala>
+            <includes>
+              <include>src/main/scala/**/*.scala</include>
+              <include>src/test/scala/**/*.scala</include>
+            </includes>
+            <scalafmt>
+              <version>${scalafmt.version}</version>
+              <file>${maven.multiModuleProjectDirectory}/.scalafmt.conf</file>
+            </scalafmt>
+          </scala>
+          <pom>
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+            <sortPom>
+              <encoding>UTF-8</encoding>
+              <keepBlankLines>true</keepBlankLines>
+              <nrOfIndentSpace>2</nrOfIndentSpace>
+              <indentBlankLines>false</indentBlankLines>
+            </sortPom>
+          </pom>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
-<properties>
-  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  <scala.version>2.12.10</scala.version>
-  <scala.binary.version>2.12</scala.binary.version>
-  <spark.version>3.0.1</spark.version>
-</properties>
-
-<dependencies>
-  <dependency>
-    <groupId>org.scala-lang</groupId>
-    <artifactId>scala-library</artifactId>
-    <version>${scala.version}</version>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.spark</groupId>
-    <artifactId>spark-core_${scala.binary.version}</artifactId>
-    <version>${spark.version}</version>
-    <scope>provided</scope>
-  </dependency>
-  <dependency>                                                                
-    <groupId>com.google.guava</groupId>                                       
-    <artifactId>guava</artifactId>                                            
-    <version>18.0</version>
-  </dependency> 
-</dependencies>
+  <profiles>
+    <profile>
+      <id>scala-2.11</id>
+      <properties>
+        <scala.version>2.11.12</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>scala-2.12</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <scala.version>2.12.15</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>scala-2.13</id>
+      <properties>
+        <scala.version>2.13.11</scala.version>
+        <scala.binary.version>2.13</scala.binary.version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

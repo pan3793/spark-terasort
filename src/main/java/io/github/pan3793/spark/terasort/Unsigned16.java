@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,17 +16,16 @@
  * limitations under the License.
  */
 
-package com.github.ehiggs.spark.terasort;
+package io.github.pan3793.spark.terasort;
 
-/**
+/*
  * This file is copied and simplified from Hadoop package org.apache.hadoop.examples.terasort.
  */
 
-/**
- * An unsigned 16 byte integer class that supports addition, multiplication,
- * and left shifts.
- */
-class Unsigned16 {
+import java.io.Serializable;
+
+/** An unsigned 16 byte integer class that supports addition, multiplication, and left shifts. */
+public class Unsigned16 implements Serializable {
   private long hi8;
   private long lo8;
 
@@ -61,6 +60,7 @@ class Unsigned16 {
 
   /**
    * Parse a hex string
+   *
    * @param s the hex string
    */
   public Unsigned16(String s) throws NumberFormatException {
@@ -69,13 +69,14 @@ class Unsigned16 {
 
   /**
    * Set the number from a hex string
+   *
    * @param s the number in hexadecimal
    * @throws NumberFormatException if the number is invalid
    */
   public void set(String s) throws NumberFormatException {
     hi8 = 0;
     lo8 = 0;
-    final long lastDigit = 0xfl << 60;
+    final long lastDigit = 0xfL << 60;
     for (int i = 0; i < s.length(); ++i) {
       int digit = getHexDigit(s.charAt(i));
       if ((lastDigit & hi8) != 0) {
@@ -90,6 +91,7 @@ class Unsigned16 {
 
   /**
    * Set the number to a given long.
+   *
    * @param l the new value, which is treated as an unsigned number
    */
   public void set(long l) {
@@ -99,9 +101,9 @@ class Unsigned16 {
 
   /**
    * Map a hexadecimal character into a digit.
+   *
    * @param ch the character
    * @return the digit from 0 to 15
-   * @throws NumberFormatException
    */
   private static int getHexDigit(char ch) throws NumberFormatException {
     if (ch >= '0' && ch <= '9') {
@@ -116,9 +118,7 @@ class Unsigned16 {
     throw new NumberFormatException(ch + " is not a valid hex digit");
   }
 
-  /**
-   * Return the number as a hex string.
-   */
+  /** Return the number as a hex string. */
   public String toString() {
     if (hi8 == 0) {
       return Long.toHexString(lo8);
@@ -126,7 +126,7 @@ class Unsigned16 {
       StringBuilder result = new StringBuilder();
       result.append(Long.toHexString(hi8));
       String loString = Long.toHexString(lo8);
-      for(int i=loString.length(); i < 16; ++i) {
+      for (int i = loString.length(); i < 16; ++i) {
         result.append('0');
       }
       result.append(loString);
@@ -136,15 +136,16 @@ class Unsigned16 {
 
   /**
    * Get a given byte from the number.
+   *
    * @param b the byte to get with 0 meaning the most significant byte
    * @return the byte or 0 if b is outside of 0..15
    */
   public byte getByte(int b) {
     if (b >= 0 && b < 16) {
       if (b < 8) {
-        return (byte) (hi8 >> (56 - 8*b));
+        return (byte) (hi8 >> (56 - 8 * b));
       } else {
-        return (byte) (lo8 >> (120 - 8*b));
+        return (byte) (lo8 >> (120 - 8 * b));
       }
     }
     return 0;
@@ -152,6 +153,7 @@ class Unsigned16 {
 
   /**
    * Get the hexadecimal digit at the given position.
+   *
    * @param p the digit position to get with 0 meaning the most significant
    * @return the character or '0' if p is outside of 0..31
    */
@@ -168,49 +170,45 @@ class Unsigned16 {
     }
   }
 
-  /**
-   * Get the high 8 bytes as a long.
-   */
+  /** Get the high 8 bytes as a long. */
   public long getHigh8() {
     return hi8;
   }
 
-  /**
-   * Get the low 8 bytes as a long.
-   */
+  /** Get the low 8 bytes as a long. */
   public long getLow8() {
     return lo8;
   }
 
   /**
-   * Multiple the current number by a 16 byte unsigned integer. Overflow is not
-   * detected and the result is the low 16 bytes of the result. The numbers
-   * are divided into 32 and 31 bit chunks so that the product of two chucks
-   * fits in the unsigned 63 bits of a long.
+   * Multiple the current number by a 16 byte unsigned integer. Overflow is not detected and the
+   * result is the low 16 bytes of the result. The numbers are divided into 32 and 31 bit chunks so
+   * that the product of two chucks fits in the unsigned 63 bits of a long.
+   *
    * @param b the other number
    */
   void multiply(Unsigned16 b) {
     // divide the left into 4 32 bit chunks
     long[] left = new long[4];
-    left[0] = lo8 & 0xffffffffl;
+    left[0] = lo8 & 0xffffffffL;
     left[1] = lo8 >>> 32;
-    left[2] = hi8 & 0xffffffffl;
+    left[2] = hi8 & 0xffffffffL;
     left[3] = hi8 >>> 32;
     // divide the right into 5 31 bit chunks
     long[] right = new long[5];
-    right[0] = b.lo8 & 0x7fffffffl;
-    right[1] = (b.lo8 >>> 31) & 0x7fffffffl;
-    right[2] = (b.lo8 >>> 62) + ((b.hi8 & 0x1fffffffl) << 2);
-    right[3] = (b.hi8 >>> 29) & 0x7fffffffl;
+    right[0] = b.lo8 & 0x7fffffffL;
+    right[1] = (b.lo8 >>> 31) & 0x7fffffffL;
+    right[2] = (b.lo8 >>> 62) + ((b.hi8 & 0x1fffffffL) << 2);
+    right[3] = (b.hi8 >>> 29) & 0x7fffffffL;
     right[4] = (b.hi8 >>> 60);
     // clear the cur value
     set(0);
     Unsigned16 tmp = new Unsigned16();
-    for(int l=0; l < 4; ++l) {
-      for (int r=0; r < 5; ++r) {
+    for (int l = 0; l < 4; ++l) {
+      for (int r = 0; r < 5; ++r) {
         long prod = left[l] * right[r];
         if (prod != 0) {
-          int off = l*32 + r*31;
+          int off = l * 32 + r * 31;
           tmp.set(prod);
           tmp.shiftLeft(off);
           add(tmp);
@@ -221,12 +219,13 @@ class Unsigned16 {
 
   /**
    * Add the given number into the current number.
+   *
    * @param b the other number
    */
   public void add(Unsigned16 b) {
     long sumHi;
     long sumLo;
-    long  reshibit, hibit0, hibit1;
+    long reshibit, hibit0, hibit1;
 
     sumHi = hi8 + b.hi8;
 
@@ -235,14 +234,15 @@ class Unsigned16 {
     sumLo = lo8 + b.lo8;
     reshibit = (sumLo & 0x8000000000000000L);
     if ((hibit0 & hibit1) != 0 | ((hibit0 ^ hibit1) != 0 && reshibit == 0))
-      sumHi++;  /* add carry bit */
+      sumHi++; /* add carry bit */
     hi8 = sumHi;
     lo8 = sumLo;
   }
 
   /**
-   * Shift the number a given number of bit positions. The number is the low
-   * order bits of the result.
+   * Shift the number a given number of bit positions. The number is the low order bits of the
+   * result.
+   *
    * @param bits the bit positions to shift by
    */
   public void shiftLeft(int bits) {

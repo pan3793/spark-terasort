@@ -1,3 +1,6 @@
-release.properties
-scalastyle-output.xml
+.DS_Store
+.fleet/
+.idea/
+.vscode/
 target/
+tmp/
