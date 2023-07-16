@@ -72,9 +72,12 @@
     <maven.plugin.antrun.version>3.1.0</maven.plugin.antrun.version>
     <maven.plugin.clean.version>3.3.1</maven.plugin.clean.version>
     <maven.plugin.flatten.version>1.5.0</maven.plugin.flatten.version>
+    <maven.plugin.gpg.version>3.1.0</maven.plugin.gpg.version>
     <maven.plugin.jar.version>3.3.0</maven.plugin.jar.version>
+    <maven.plugin.javadoc.version>3.5.0</maven.plugin.javadoc.version>
     <maven.plugin.scala.version>4.8.0</maven.plugin.scala.version>
     <maven.plugin.scalatest.version>2.2.0</maven.plugin.scalatest.version>
+    <maven.plugin.source.version>3.3.0</maven.plugin.source.version>
     <maven.plugin.spotless.version>2.24.1</maven.plugin.spotless.version>
   </properties>
 
@@ -224,6 +227,58 @@
         <scala.version>2.13.11</scala.version>
         <scala.binary.version>2.13</scala.binary.version>
       </properties>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven.plugin.source.version}</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven.plugin.javadoc.version}</version>
+            <configuration>
+              <quiet>true</quiet>
+              <doclint>none</doclint>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven.plugin.gpg.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
