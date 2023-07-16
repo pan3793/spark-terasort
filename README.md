@@ -1,4 +1,7 @@
-# TeraSort benchmark for Spark
+TeraSort benchmark for Spark
+===
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.pan3793/spark-terasort_2.12/badge.svg)](https://central.sonatype.com/search?name=spark-terasort&namespace=io.github.pan3793)
+[![License](https://img.shields.io/github/license/pan3793/spark-terasort)](https://github.com/pan3793/spark-terasort/blob/master/LICENSE)
 
 This is a Spark application for generating TeraSort data and running TeraSort benchmarks.
 It is variant of TeraSort program listed on http://sortbenchmark.org/.
