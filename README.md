@@ -24,6 +24,14 @@ $SPARK_HOME/bin/spark-submit \
   spark-terasort_2.12-2.0.0.jar \
   <size> <generate_data_path>
 ```
+or
+```shell
+$SPARK_HOME/bin/spark-submit \
+  --class io.github.pan3793.spark.terasort.TeraGen \
+  --packages io.github.pan3793:spark-terasort_2.12:2.0.0 \
+  spark-internal \
+  <size> <generate_data_path>
+```
 
 ## Sort the data
 
@@ -33,6 +41,14 @@ $SPARK_HOME/bin/spark-submit \
   spark-terasort_2.12-2.0.0.jar \
   <input_data_path> <output_data_path>
 ```
+or
+```shell
+$SPARK_HOME/bin/spark-submit \
+  --class io.github.pan3793.spark.terasort.TeraSort \
+  --packages io.github.pan3793:spark-terasort_2.12:2.0.0 \
+  spark-internal \
+  <input_data_path> <output_data_path>
+```
 
 ## Validate the data
 
@@ -40,6 +56,14 @@ $SPARK_HOME/bin/spark-submit \
 $SPARK_HOME/bin/spark-submit \
   --class io.github.pan3793.spark.terasort.TeraValidate \
   spark-terasort_2.12-2.0.0.jar \
+  <output_data_path>
+```
+or
+```shell
+$SPARK_HOME/bin/spark-submit \
+  --class io.github.pan3793.spark.terasort.TeraValidate \
+  --packages io.github.pan3793:spark-terasort_2.12:2.0.0 \
+  spark-internal \
   <output_data_path>
 ```
 
