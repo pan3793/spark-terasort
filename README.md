@@ -11,7 +11,7 @@ This is fork and rework of [ehiggs/spark-terasort](https://github.com/ehiggs/spa
 # Building
 
 ```shell
-build/mvn clean package -Pscala-2.12 -Dspark.version=3.3.2
+build/mvn clean package -DskipTests -Pscala-2.12 -Dspark.version=3.3.2
 ```
 
 # Running
